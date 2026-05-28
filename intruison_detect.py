@@ -23,15 +23,6 @@ class IntrusionDetector:
             with open("ids.log", "a") as log_file:
                 log_file.write(log_entry)
             
-            result = subprocess.run(
-                ["sudo", "iptables", "-C", "INPUT", "-s", source_ip, "-j", "DROP"],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            if result.returncode != 0:
-                subprocess.run(
-                    ["sudo", "iptables", "-I", "INPUT", "1", "-s", source_ip, "-j", "DROP"],
-                    check=True
-                )
             self.port_scan_history[source_ip] = []
 
     def detect_sequential(self, source_ip, ports_set, current_time):
@@ -63,15 +54,6 @@ class IntrusionDetector:
                 with open("ids.log", "a") as log_file:
                     log_file.write(log_entry)
                 
-                result = subprocess.run(
-                    ["sudo", "iptables", "-C", "INPUT", "-s", source_ip, "-j", "DROP"],
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE
-                )
-                if result.returncode != 0:
-                    subprocess.run(
-                        ["sudo", "iptables", "-I", "INPUT", "1", "-s", source_ip, "-j", "DROP"],
-                        check=True
-                    )
                 self.port_scan_history[source_ip] = []
 
     def detect_os_fingerprint(self, source_ip, flags_set, current_time):
@@ -83,16 +65,6 @@ class IntrusionDetector:
             log_entry = f"{timestamp_str} — OS Fingerprinting — {source_ip} — {flagged} — {time_span}s\n"
             with open("ids.log", "a") as log_file:
                 log_file.write(log_entry)
-
-            result = subprocess.run(
-                ["sudo", "iptables", "-C", "INPUT", "-s", source_ip, "-j", "DROP"],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            if result.returncode != 0:
-                subprocess.run(
-                    ["sudo", "iptables", "-I", "INPUT", "1", "-s", source_ip, "-j", "DROP"],
-                    check=True
-                )
             self.os_fingerprint_history[source_ip] = []
 
     def process_packet(self, packet):

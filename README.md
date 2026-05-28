@@ -1,96 +1,49 @@
-# Network-based Intrusion Detection and Prevention System (NIDPS)
+# 🛡️ Hybrid Intrusion Detection System (IDPS)
 
-## Overview
+*An AI-driven network security engine combining Static Signature matching with a Deep Learning Variational Autoencoder (VAE) for Zero-Day anomaly detection.*
 
-This project implements a Network-based Intrusion Detection and Prevention System (NIDPS) using Python. The system monitors network traffic, detects malicious activities through signature and anomaly-based detection techniques, logs intrusions, blocks attackers, and provides a CLI for management. It is designed to detect port scanning, OS fingerprinting, and other network attacks.
+## 🚀 Overview
+Modern networks face two threats: known signatures (which are easy to block) and unknown zero-day attacks (which bypass standard firewalls). This project implements a **Hybrid IDPS** to handle both:
+1. **Static Rules Engine:** Uses Python and `scapy` to instantly intercept known attacks like Port Scanning and OS Fingerprinting with 100% precision.
+2. **Deep Learning Engine (VAE):** Uses a PyTorch Variational Autoencoder trained on the massive CICIDS-2017 dataset. The VAE learns the complex mathematical manifold of "Normal" traffic. When a Zero-Day attack hits the network, the VAE fails to decode it, and the resulting Reconstruction Error (MSE) triggers an AI anomaly alert.
 
-## Features
+## ✨ Features
+- **Deep Exploratory Data Analysis (EDA):** Calculates Point-Biserial Correlation (Linear) and Mutual Information (Non-Linear) to mathematically prove the separability of network flow features.
+- **PyTorch VAE Architecture:** A fully custom Autoencoder using the reparameterization trick to model network traffic distributions.
+- **Zero-Day Traffic Injector:** Simulate injecting raw PCAP flow features directly into the neural network to test its response to never-before-seen anomalies.
+- **Real-Time Streamlit Dashboard:** A gorgeous, dark-mode command center to monitor live simulated traffic, view VAE reconstruction errors on a dynamic gauge, and investigate EDA charts.
 
-- **Network Traffic Monitoring**: Capture and analyze TCP packets.
-- **Intrusion Detection**:
-  - **Port Scanning Detection**: Flags IPs scanning >6 ports in 15 seconds or sequential ports.
-  - **OS Fingerprinting Detection**: Detects IPs sending 5+ unique TCP flag combinations in 20 seconds.
-- **Intrusion Prevention**: Automatically block malicious IPs using `iptables`.
-- **Logging**: Detailed logs in `ids.log`.
-- **CLI Interface**: Manage IDS, view traffic, logs, and blocked IPs.
+## 🛠️ Technology Stack
+- **Machine Learning:** PyTorch, Scikit-Learn, Pandas, NumPy, SciPy
+- **Data Visualization:** Matplotlib, Streamlit
+- **Network Security:** Scapy (for static packet sniffing)
 
-## Prerequisites
+## 📊 The Deep Learning Architecture
+Unlike supervised classifiers (which overfit to known attacks and fail against new ones), this IDPS utilizes **Unsupervised Learning**.
+- We trained the VAE *strictly* on Normal traffic.
+- When evaluating live packets, the model attempts to reconstruct the flow features.
+- If the Mean Squared Error (MSE) between the original packet and the reconstructed packet exceeds the dynamic threshold, it is flagged as a zero-day anomaly.
 
-- Linux OS (for `iptables` integration)
-- Python 3.x
-- `hping3` (for attack simulation)
-- Root/sudo privileges (required for packet sniffing and `iptables`)
+## 💻 How to Run Locally
 
-## Libraries Used
+### 1. Install Dependencies
+Ensure you have Python 3.8+ installed, then run:
+```bash
+pip install -r requirements.txt
+```
 
-- `scapy`: Packet sniffing and manipulation.
-- `colorama` & `pyfiglet`: CLI interface styling.
-- `subprocess`: Execute system commands (e.g., `iptables`).
+### 2. Launch the Streamlit Dashboard
+```bash
+streamlit run app.py
+```
+This will boot up the command center where you can navigate between the Deep EDA, the Zero-Day Simulation Injector, and the Live Network Stream.
 
-## Installation
+### 3. (Optional) Run the Static Sniffer
+If you are on a Linux environment and want to run the raw packet sniffer to test the Snort-style static rules directly on your network interfaces:
+```bash
+sudo python3 cli.py
+```
+*(Note: Windows environments should rely on the Streamlit simulation).*
 
-1. **Set up the virtual environment**:
-
-   ```bash
-   chmod +x script.sh
-   ./script.sh  # Installs dependencies from requirements.txt
-   ```
-
-2. **Install `hping3`**:
-   ```bash
-   sudo apt-get install hping3
-   ```
-
-## Workflow
-
-1. **Traffic Capture**: Uses `scapy` to sniff TCP packets.
-2. **Detection Engine**:
-   - **Anomaly Detection**: Track ports per IP over time windows.
-   - **Signature Detection**: Flag abnormal TCP flag combinations.
-3. **Prevention**: Block detected IPs via `iptables`.
-4. **Logging**: Record intrusions in `ids.log`.
-5. **CLI**: Manage the system interactively.
-
-## Execution Steps
-
-1. **Run the NIDPS CLI** (as root):
-
-   ```bash
-   sudo python3 cli.py
-   ```
-
-2. **Use the CLI Menu**:
-
-   - Select `1` to start the IDS.
-   - Use other options to view traffic, logs, or manage blocked IPs.
-
-3. **Simulate Attacks** (in a separate terminal):
-   ```bash
-   python3 attack_script.py
-   ```
-   Follow prompts to generate port scans, SYN floods, or normal traffic.
-
-## Attacks Explained
-
-### 1. Port Scanning
-
-- **Purpose**: Identify open ports on a target.
-- **Detection**:
-  - **Anomaly-Based**: >6 unique ports from an IP in 15 seconds.
-  - **Sequential**: 6+ consecutive ports (e.g., port 80, 81, 82...).
-
-### 2. OS Fingerprinting
-
-- **Purpose**: Determine the target's OS using TCP flag variations.
-- **Detection**: 5+ unique flag combinations (e.g., SYN, SYN+ACK) from an IP in 20 seconds.
-
-### 3. SYN Flood
-
-- **Purpose**: Overwhelm a target with SYN packets to exhaust resources.
-- **Simulation**: `attack_script.py` sends multiple SYN packets to a port.
-
-## Notes
-
-- Ensure the target IP in `attack_script.py` matches your environment.
-- Logs are saved in `ids.log`.
-- Blocked IPs can be managed via the CLI or `iptables` directly.
+## ☁️ Cloud Deployment
+This project is configured for one-click deployment to **Streamlit Community Cloud**. It includes a lightweight `sample_traffic.csv` file to simulate the massive CICIDS-2017 dataset in a cloud-hosted environment without exceeding storage limits.
