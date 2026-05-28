@@ -1,8 +1,8 @@
-# 🛡️ Hybrid Intrusion Detection System (IDPS)
+# Hybrid Intrusion Detection System (IDPS)
 
 *An AI-driven network security engine combining Static Signature matching with a Deep Learning Variational Autoencoder (VAE) for Zero-Day anomaly detection.*
 
-## 🚀 Overview
+## Overview
 Modern networks face two threats: known signatures (which are easy to block) and unknown zero-day attacks (which bypass standard firewalls). This project implements a **Hybrid IDPS** to handle both:
 1. **Static Rules Engine:** Uses Python and `scapy` to instantly intercept known attacks like Port Scanning and OS Fingerprinting with 100% precision.
 2. **Deep Learning Engine (VAE):** Uses a PyTorch Variational Autoencoder trained on the massive CICIDS-2017 dataset. The VAE learns the complex mathematical manifold of "Normal" traffic. When a Zero-Day attack hits the network, the VAE fails to decode it, and the resulting Reconstruction Error (MSE) triggers an AI anomaly alert.
@@ -24,7 +24,7 @@ Unlike supervised classifiers (which overfit to known attacks and fail against n
 - When evaluating live packets, the model attempts to reconstruct the flow features.
 - If the Mean Squared Error (MSE) between the original packet and the reconstructed packet exceeds the dynamic threshold, it is flagged as a zero-day anomaly.
 
-## 💻 How to Run Locally
+## How to Run Locally
 
 ### 1. Install Dependencies
 Ensure you have Python 3.8+ installed, then run:
